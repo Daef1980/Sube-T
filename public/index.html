@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sube T — Monclova ↔ Monterrey</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6fb;min-height:100vh}
+:root{--sube:#1a3a6b;--sube-light:#e8f0fb;--gold:#f0c015;--green:#1d9e75;--red:#e24b4a}
+.topnav{background:var(--sube);color:white;padding:0 1rem;display:flex;align-items:center;position:sticky;top:0;z-index:100;overflow-x:auto}
+.brand{padding:12px 0;margin-right:auto;display:flex;align-items:center;gap:2px;flex-shrink:0}
+.bs{font-size:22px;font-weight:600;color:var(--gold)}.bube{font-size:22px;font-weight:600;color:white}
+.bdot{width:7px;height:7px;background:var(--gold);border-radius:50%;margin-left:2px;margin-bottom:8px}
+.ntab{padding:13px 11px;font-size:12px;cursor:pointer;opacity:.6;border-bottom:3px solid transparent;color:white;white-space:nowrap;transition:opacity .15s}
+.ntab:hover{opacity:.9}.ntab.active{opacity:1;border-bottom-color:var(--gold)}
+.page{display:none;padding:1.25rem 1rem;max-width:720px;margin:0 auto}.page.vis{display:block}
+.card{background:white;border:1px solid #e8edf5;border-radius:14px;padding:1.25rem;margin-bottom:1rem}
+.ctitle{font-size:15px;font-weight:600;color:#1a2035;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.hero{background:var(--sube);color:white;border-radius:14px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.htxt{flex:1}.htitle{font-size:16px;font-weight:600}.hsub{font-size:12px;opacity:.7;margin-top:3px}
+.ppill{background:var(--gold);color:var(--sube);font-weight:600;font-size:13px;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.steps{display:flex;gap:3px;margin-bottom:1.25rem}
+.step{flex:1;text-align:center;padding:6px 2px;border-radius:8px;font-size:10px;color:#888;border:1px solid #e0e6f0}
+.step.active{background:var(--sube);color:white;border-color:var(--sube)}
+.step.done{background:#e8f4ec;color:#0f6e56;border-color:#5dcaa5}
+.sn{display:block;font-size:14px;font-weight:600}
+.rb{padding:14px;border-radius:10px;border:1px solid #e0e6f0;background:white;cursor:pointer;text-align:center;transition:all .15s}
+.rb:hover{border-color:var(--sube)}.rb.sel{border:2px solid var(--sube);background:var(--sube-light)}
+.rl{font-size:12px;color:#888}.rv{font-size:14px;font-weight:600;color:#1a2035}.rb.sel .rv,.rb.sel .rl{color:var(--sube)}
+.hb{padding:10px 6px;border-radius:10px;border:1px solid #e0e6f0;background:white;cursor:pointer;text-align:center;transition:all .15s}
+.hb:hover:not(.lleno){border-color:var(--sube)}.hb.sel{border:2px solid var(--sube);background:var(--sube-light)}
+.hb.lleno{opacity:.45;cursor:not-allowed}.ht{font-size:13px;font-weight:600}.hb.sel .ht{color:var(--sube)}
+.hs{font-size:11px;color:#888;margin-top:3px}
+.seat{width:21px;height:21px;border-radius:4px;border:1.5px solid #5dcaa5;background:#e8f4ec;color:#0f6e56;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
+.seat.taken{background:#f0f0f0;border-color:#ccc;color:#aaa}
+.btn{padding:9px 16px;border-radius:10px;font-size:13px;cursor:pointer;border:1px solid #dde3ef;background:white;color:#333;transition:all .15s}
+.btn:hover{background:#f4f6fb}.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-sube{background:var(--sube);color:white;border-color:var(--sube)}.btn-sube:hover:not(:disabled){opacity:.88;background:var(--sube)}
+.btn-gold{background:var(--gold);color:var(--sube);border-color:var(--gold);font-weight:600}.btn-gold:hover{opacity:.88}
+.btn-green{background:var(--green);color:white;border-color:var(--green)}.btn-green:hover{opacity:.88;background:var(--green)}
+.btn-sm{padding:5px 10px;font-size:12px}.btn-full{width:100%;padding:12px;font-size:14px}
+.btn-danger{color:#a32d2d;border-color:#f09595}.btn-danger:hover{background:#fcebeb}
+.field{margin-bottom:14px}.lbl{font-size:13px;color:#666;margin-bottom:5px;display:block}
+input[type=text],input[type=tel],input[type=date],select{width:100%;padding:9px 12px;border:1px solid #dde3ef;border-radius:8px;font-size:14px;outline:none;font-family:inherit}
+input:focus,select:focus{border-color:var(--sube)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.po{padding:14px;border-radius:10px;border:1px solid #e0e6f0;background:white;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;margin-bottom:8px}
+.po:hover{border-color:var(--sube)}.po.sel{border:2px solid var(--sube);background:var(--sube-light)}
+.poi{font-size:22px;color:var(--sube)}.pon{font-size:14px;font-weight:600;color:#1a2035}.po.sel .pon{color:var(--sube)}
+.pos{font-size:12px;color:#888;margin-top:2px}
+.ticket{background:var(--sube);color:white;border-radius:14px;padding:1.25rem;margin-bottom:1rem}
+.tbrand{display:flex;align-items:center;gap:4px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.2)}
+.tbs{font-size:18px;font-weight:600;color:var(--gold)}.tbube{font-size:18px;font-weight:600;color:white}
+.tr{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-top:1px solid rgba(255,255,255,.12)}
+.tl{opacity:.6}
+.saldo-spei{background:#e8f4ec;border:1px solid #5dcaa5;border-radius:10px;padding:14px;margin-top:1rem}
+.saldo-ef{background:#faeeda;border:1px solid #ef9f27;border-radius:10px;padding:14px;margin-top:1rem}
+.stitle{font-size:13px;font-weight:600;margin-bottom:6px}
+.saldo-spei .stitle{color:#0f6e56}.saldo-ef .stitle{color:#854f0b}
+.sdet{font-size:12px;line-height:1.7}
+.saldo-spei .sdet{color:#085041}.saldo-ef .sdet{color:#633806}
+.clabe{font-family:monospace;font-size:13px;background:rgba(255,255,255,.6);padding:4px 8px;border-radius:4px;display:inline-block;margin-top:4px;letter-spacing:1px}
+.icard{background:white;border:1px solid #e8edf5;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:border-color .15s;margin-bottom:8px}
+.ib{flex:1;min-width:0}.in{font-size:14px;font-weight:600;color:#1a2035}.is{font-size:12px;color:#888;margin-top:2px}
+.ia{display:flex;gap:6px;flex-shrink:0}
+.av{width:44px;height:44px;border-radius:50%;background:var(--sube-light);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--sube);flex-shrink:0;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px}
+.bg{background:#e8f4ec;color:#0f6e56}.bb{background:var(--sube-light);color:var(--sube)}
+.by{background:#faeeda;color:#854f0b}.bgr{background:#f4f4f4;color:#666}.bred{background:#fcebeb;color:#a32d2d}
+.rtable{width:100%;font-size:13px;border-collapse:collapse;table-layout:fixed}
+.rtable th{text-align:left;padding:8px;font-weight:600;font-size:11px;color:#888;border-bottom:1px solid #e8edf5}
+.rtable td{padding:8px;border-bottom:1px solid #e8edf5;color:#1a2035;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.rtable tr:last-child td{border-bottom:none}.rtable tr:hover td{background:#f9fafc}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:white;border-radius:14px;padding:1.25rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.mtitle{font-size:16px;font-weight:600;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.mtitle button{background:none;border:none;font-size:20px;cursor:pointer;color:#888}
+.sb{display:none}.sb.vis{display:block}
+.suc{text-align:center;padding:1.5rem 1rem}
+.sucicon{font-size:52px;margin-bottom:1rem}
+.timer{background:#faeeda;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.timertext{font-size:13px;color:#633806}.timern{font-weight:600;font-family:monospace}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:1rem}
+.stat{background:#f4f6fb;border-radius:10px;padding:12px;text-align:center}
+.statn{font-size:24px;font-weight:600;color:var(--sube)}.statl{font-size:11px;color:#888;margin-top:2px}
+.cond-card{background:white;border:1px solid #e8edf5;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.swatch{width:14px;height:36px;border-radius:4px;border:1px solid rgba(0,0,0,.12);flex-shrink:0}
+.empty{text-align:center;padding:2.5rem 1rem;color:#aaa}
+.mp-box{background:#f9fafc;border-radius:12px;padding:1.25rem;text-align:center;margin-bottom:1rem;border:1px solid #e8edf5}
+.mp-amount{font-size:36px;font-weight:700;color:var(--sube);margin-bottom:4px}
+.mp-label{font-size:13px;color:#888;margin-bottom:1rem}
+.mp-logo{background:#009ee3;color:white;font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:1rem}
+textarea{width:100%;padding:9px 12px;border:1px solid #dde3ef;border-radius:8px;font-size:14px;min-height:70px;resize:vertical;font-family:inherit;outline:none}
+textarea:focus{border-color:var(--sube)}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="brand"><span class="bs">S</span><span class="bube">ube</span><span class="bube" style="font-size:14px;opacity:.7;margin-left:3px">T</span><div class="bdot"></div></div>
+  <div class="ntab active" onclick="showPage('reservar')">✈ Reservar</div>
+  <div class="ntab" onclick="showPage('reservas')">📋 Reservas</div>
+  <div class="ntab" onclick="showPage('conductor')">🚗 Conductor</div>
+  <div class="ntab" onclick="showPage('unidades')">🚙 Unidades</div>
+  <div class="ntab" onclick="showPage('conductores')">👤 Conductores</div>
+</div>
+
+<!-- RESERVAR -->
+<div class="page vis" id="page-reservar">
+  <div class="hero">
+    <div class="htxt"><div class="htitle">Monclova ↔ Monterrey</div><div class="hsub">Reserva con $100 de depósito · Saldo al abordar</div></div>
+    <div class="ppill">$350 total</div>
+  </div>
+  <div class="steps">
+    <div class="step active" id="bs1"><span class="sn">1</span>Ruta</div>
+    <div class="step" id="bs2"><span class="sn">2</span>Horario</div>
+    <div class="step" id="bs3"><span class="sn">3</span>Unidad</div>
+    <div class="step" id="bs4"><span class="sn">4</span>Datos</div>
+    <div class="step" id="bs5"><span class="sn">5</span>Saldo</div>
+    <div class="step" id="bs6"><span class="sn">6</span>Pago</div>
+  </div>
+
+  <div class="sb vis" id="bp1">
+    <div class="card">
+      <div class="ctitle">📍 ¿Desde dónde sales?</div>
+      <div class="g2" style="margin-bottom:1rem">
+        <div class="rb" id="rb-MCL" onclick="selRuta('MCL')"><div class="rl">Salida</div><div class="rv">Monclova → MTY</div></div>
+        <div class="rb" id="rb-MTY" onclick="selRuta('MTY')"><div class="rl">Salida</div><div class="rv">Monterrey → MCL</div></div>
+      </div>
+      <div class="field"><label class="lbl">Fecha del viaje</label><input type="date" id="b-fecha" onchange="checkP1()"></div>
+      <button class="btn btn-sube btn-full" id="btn-p1" onclick="bGoTo(2)" disabled>Continuar →</button>
+    </div>
+  </div>
+
+  <div class="sb" id="bp2">
+    <div class="card">
+      <div class="ctitle">🕐 Elige tu horario</div>
+      <div class="g3" id="hor-container"></div>
+      <button class="btn btn-sube btn-full" id="btn-p2" onclick="bGoTo(3)" disabled style="margin-top:1rem">Continuar →</button>
+      <button class="btn btn-full" onclick="bGoTo(1)" style="margin-top:8px">← Atrás</button>
+    </div>
+  </div>
+
+  <div class="sb" id="bp3">
+    <div class="card">
+      <div class="ctitle">🚗 Elige tu unidad</div>
+      <div id="unidad-pick"></div>
+      <button class="btn btn-sube btn-full" id="btn-p3" onclick="bGoTo(4)" disabled style="margin-top:1rem">Continuar →</button>
+      <button class="btn btn-full" onclick="bGoTo(2)" style="margin-top:8px">← Atrás</button>
+    </div>
+  </div>
+
+  <div class="sb" id="bp4">
+    <div class="card">
+      <div class="ctitle">👤 Tus datos</div>
+      <div class="field"><label class="lbl">Nombre completo</label><input type="text" id="b-nombre" placeholder="María López" oninput="checkP4()"></div>
+      <div class="g2">
+        <div class="field"><label class="lbl">Teléfono</label><input type="tel" id="b-tel" placeholder="866 123 4567" oninput="checkP4()"></div>
+        <div class="field"><label class="lbl">Personas</label>
+          <select id="b-personas" onchange="checkP4()">
+            <option value="1">1 persona</option><option value="2">2 personas</option><option value="3">3 personas</option><option value="4">4 personas</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-sube btn-full" id="btn-p4" onclick="bGoTo(5)" disabled>Continuar →</button>
+      <button class="btn btn-full" onclick="bGoTo(3)" style="margin-top:8px">← Atrás</button>
+    </div>
+  </div>
+
+  <div class="sb" id="bp5">
+    <div class="card">
+      <div class="ctitle">💳 ¿Cómo pagas el saldo de $250?</div>
+      <p style="font-size:13px;color:#888;margin-bottom:1rem">Lo pagas al conductor el día del viaje, antes de abordar.</p>
+      <div class="po" id="pm-spei" onclick="selMetodo('spei')">
+        <div class="poi">🏦</div>
+        <div><div class="pon">Transferencia SPEI</div><div class="pos">Te mostramos la CLABE del conductor en tu folio</div></div>
+      </div>
+      <div class="po" id="pm-efectivo" onclick="selMetodo('efectivo')">
+        <div class="poi">💵</div>
+        <div><div class="pon">Efectivo al abordar</div><div class="pos">Llevas $250 en efectivo el día del viaje</div></div>
+      </div>
+      <button class="btn btn-sube btn-full" id="btn-p5" onclick="bGoTo(6)" disabled style="margin-top:4px">Continuar →</button>
+      <button class="btn btn-full" onclick="bGoTo(4)" style="margin-top:8px">← Atrás</button>
+    </div>
+  </div>
+
+  <div class="sb" id="bp6">
+    <div class="card">
+      <div class="ctitle">💳 Paga tu depósito de $100</div>
+      <div class="timer" id="timer-box" style="display:none">
+        <span>⏱</span><div class="timertext">Tu lugar expira en <span class="timern" id="timer-disp">30:00</span></div>
+      </div>
+      <div class="mp-box">
+        <div class="mp-amount">$100 MXN</div>
+        <div class="mp-label">Depósito de reserva · Saldo $250 al conductor</div>
+        <div class="mp-logo">Mercado Pago</div>
+        <div id="resumen-pago" style="text-align:left"></div>
+      </div>
+      <button class="btn btn-gold btn-full" id="btn-pagar" onclick="pagarMP()">🔒 Pagar $100 con Mercado Pago</button>
+      <div style="font-size:11px;color:#aaa;text-align:center;margin-top:8px">Acepta tarjeta, débito, OXXO y transferencia</div>
+      <button class="btn btn-full" onclick="bGoTo(5)" style="margin-top:8px">← Atrás</button>
+    </div>
+  </div>
+
+  <div class="sb" id="bp-ok">
+    <div class="card">
+      <div class="suc">
+        <div class="sucicon">✅</div>
+        <div style="font-size:20px;font-weight:700;margin-bottom:6px">¡Ya estás a bordo!</div>
+        <div style="font-size:13px;color:#888;margin-bottom:1.5rem">Preséntate 15 minutos antes de la salida</div>
+        <div class="ticket" id="ticket-out"></div>
+        <div id="saldo-info"></div>
+        <button class="btn btn-sube btn-full" onclick="nuevaReserva()" style="margin-top:1rem">Nueva reserva</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESERVAS -->
+<div class="page" id="page-reservas">
+  <div class="stats" id="stats-bar"></div>
+  <div class="card">
+    <div class="ctitle">📋 Reservas</div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+      <input type="text" id="f-buscar" placeholder="Buscar nombre…" oninput="renderReservas()" style="flex:1;min-width:120px">
+      <input type="date" id="f-fecha" onchange="renderReservas()" style="flex:1;min-width:120px">
+      <select id="f-estado" onchange="renderReservas()" style="flex:1;min-width:120px">
+        <option value="">Todos</option><option value="pendiente">Pendiente</option><option value="confirmada">Confirmada</option><option value="abordado">Abordado</option><option value="cancelada">Cancelada</option><option value="expirada">Expirada</option>
+      </select>
+    </div>
+    <div id="reservas-list"></div>
+  </div>
+</div>
+
+<!-- CONDUCTOR -->
+<div class="page" id="page-conductor">
+  <div class="card">
+    <div class="ctitle">🚗 Mi viaje de hoy</div>
+    <div class="field"><label class="lbl">Mi unidad</label><select id="cond-unidad" onchange="renderCondView()"><option value="">— Selecciona —</option></select></div>
+    <div class="field"><label class="lbl">Horario</label>
+      <select id="cond-horario" onchange="renderCondView()">
+        <option value="">— Selecciona —</option>
+        <option>5AM – 7AM</option><option>10AM – 12PM</option><option>2PM – 4PM</option><option>8AM – 10AM</option><option>1PM – 3PM</option><option>8PM</option>
+      </select>
+    </div>
+  </div>
+  <div id="cond-pasajeros"></div>
+</div>
+
+<!-- UNIDADES -->
+<div class="page" id="page-unidades">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-size:16px;font-weight:600">Unidades</div>
+    <button class="btn btn-sube btn-sm" id="btn-add-u">+ Agregar</button>
+  </div>
+  <div id="unidades-list"></div>
+</div>
+
+<!-- CONDUCTORES -->
+<div class="page" id="page-conductores">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div style="font-size:16px;font-weight:600">Conductores</div>
+    <button class="btn btn-sube btn-sm" id="btn-add-c">+ Agregar</button>
+  </div>
+  <div id="conductores-list"></div>
+</div>
+
+<!-- MODAL UNIDAD -->
+<div class="modal-bg" id="m-u" style="display:none" onclick="closeMBg(event,'m-u')">
+  <div class="modal">
+    <div class="mtitle"><span id="m-u-title">Nueva unidad</span><button onclick="closeM('m-u')">×</button></div>
+    <input type="hidden" id="u-id">
+    <div class="field"><label class="lbl">Modelo</label><input type="text" id="u-nom" placeholder="VW Tiguan"></div>
+    <div class="g2">
+      <div class="field"><label class="lbl">Placa</label><input type="text" id="u-placa" placeholder="ABC-123"></div>
+      <div class="field"><label class="lbl">Capacidad</label><select id="u-cap"><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option><option value="7">7</option><option value="8">8</option></select></div>
+    </div>
+    <div class="field"><label class="lbl">Color</label><select id="u-color"><option value="#ffffff">Blanco</option><option value="#c0c0c0">Gris</option><option value="#000000">Negro</option><option value="#1a3a6b">Azul</option><option value="#8b0000">Rojo</option><option value="#228b22">Verde</option></select></div>
+    <div class="field"><label class="lbl">Conductor</label><select id="u-cond"><option value="">Sin conductor</option></select></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-sube" style="flex:1" onclick="saveU()">Guardar</button>
+      <button class="btn" onclick="closeM('m-u')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONDUCTOR -->
+<div class="modal-bg" id="m-c" style="display:none" onclick="closeMBg(event,'m-c')">
+  <div class="modal">
+    <div class="mtitle"><span id="m-c-title">Nuevo conductor</span><button onclick="closeM('m-c')">×</button></div>
+    <input type="hidden" id="c-id">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:1rem">
+      <div class="av" id="c-av-prev" style="width:72px;height:72px;font-size:26px;position:relative;cursor:pointer">
+        👤<input type="file" accept="image/*" onchange="prevFoto(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%">
+      </div>
+      <div><div style="font-size:13px;font-weight:600">Foto del conductor</div><div style="font-size:12px;color:#888;margin-top:2px">Toca para subir</div></div>
+    </div>
+    <input type="hidden" id="c-foto">
+    <div class="g2">
+      <div class="field"><label class="lbl">Nombre</label><input type="text" id="c-nom" placeholder="Juan"></div>
+      <div class="field"><label class="lbl">Apellido</label><input type="text" id="c-ape" placeholder="García"></div>
+    </div>
+    <div class="g2">
+      <div class="field"><label class="lbl">Teléfono</label><input type="tel" id="c-tel" placeholder="866 000 0000"></div>
+      <div class="field"><label class="lbl">Licencia</label><input type="text" id="c-lic" placeholder="NL-12345"></div>
+    </div>
+    <div class="field"><label class="lbl">CLABE (18 dígitos)</label><input type="text" id="c-clabe" placeholder="002180700001234567" maxlength="18"></div>
+    <div class="field"><label class="lbl">Banco</label><input type="text" id="c-banco" placeholder="BBVA, BANAMEX…"></div>
+    <div class="field"><label class="lbl">Notas</label><textarea id="c-notas" placeholder="Disponible lunes a viernes…"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-sube" style="flex:1" onclick="saveC()">Guardar</button>
+      <button class="btn" onclick="closeM('m-c')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESERVA -->
+<div class="modal-bg" id="m-r" style="display:none" onclick="closeMBg(event,'m-r')">
+  <div class="modal">
+    <div class="mtitle"><span>Detalle reserva</span><button onclick="closeM('m-r')">×</button></div>
+    <div id="m-r-content"></div>
+    <div style="display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap">
+      <button class="btn btn-danger btn-sm" onclick="cancelarRes()">🗑 Cancelar reserva</button>
+      <button class="btn btn-sm" style="margin-left:auto" onclick="closeM('m-r')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const HORS={MCL:['5AM – 7AM','10AM – 12PM','2PM – 4PM'],MTY:['8AM – 10AM','1PM – 3PM','8PM']};
+const COLORES={'#ffffff':'Blanco','#c0c0c0':'Gris','#000000':'Negro','#1a3a6b':'Azul','#8b0000':'Rojo','#228b22':'Verde'};
+const BASE_URL='/api';
+const MP_ENV='sandbox'; // cambia a 'production' cuando estés listo
+
+let db={unidades:[],conductores:[],reservas:[]};
+let bS={ruta:null,fecha:null,horario:null,unidad:null,lugar:null,nombre:'',tel:'',personas:1,metodo:null};
+let curResId=null;
+let timerInt=null;
+
+async function saveDB(){try{await window.storage.set('sube-t-v1',JSON.stringify(db));}catch(e){}}
+async function loadDB(){
+  try{const r=await window.storage.get('sube-t-v1');if(r&&r.value)db=JSON.parse(r.value);else seed();}
+  catch(e){seed();}
+  checkUrlPago();
+  renderAll();
+}
+function seed(){
+  db.conductores=[
+    {id:'c1',nombre:'Carlos',apellido:'Ramírez',tel:'8661002345',licencia:'CO-11111',clabe:'002180700001234567',banco:'BBVA',notas:'Disponible todos los días',foto:''},
+    {id:'c2',nombre:'Jesús',apellido:'Morales',tel:'8662003456',licencia:'CO-22222',clabe:'021180040012345678',banco:'HSBC',notas:'Lunes a sábado',foto:''}
+  ];
+  db.unidades=[
+    {id:'u1',nombre:'VW Tiguan',placa:'ABC-123',cap:6,color:'#ffffff',conductor:'c1'},
+    {id:'u2',nombre:'Suzuki Ertiga',placa:'DEF-456',cap:8,color:'#c0c0c0',conductor:'c2'},
+    {id:'u3',nombre:'Nissan NV200',placa:'GHI-789',cap:5,color:'#1a3a6b',conductor:''}
+  ];
+  db.reservas=[];saveDB();
+}
+
+// Detectar retorno de Mercado Pago
+function checkUrlPago(){
+  const p=new URLSearchParams(window.location.search);
+  const pago=p.get('pago');
+  const folio=p.get('folio');
+  if(!pago||!folio)return;
+  window.history.replaceState({},'','/');
+  if(pago==='exitoso'){
+    const r=db.reservas.find(x=>x.id===folio);
+    if(r){r.estado='confirmada';saveDB();mostrarExito(r);}
+    else{showPage('reservas');}
+  }else if(pago==='fallido'){
+    alert('El pago no fue completado. Tu lugar sigue disponible por unos minutos.');
+  }else if(pago==='pendiente'){
+    alert('Tu pago está pendiente (ej. OXXO). Te confirmaremos cuando se acredite.');
+  }
+}
+
+function renderAll(){renderUnidades();renderConductores();renderReservas();renderStats();poblarCondSelect();}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('vis'));
+  document.querySelectorAll('.ntab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('vis');
+  const tabs=['reservar','reservas','conductor','unidades','conductores'];
+  document.querySelectorAll('.ntab')[tabs.indexOf(p)].classList.add('active');
+  if(p==='reservas'){renderReservas();renderStats();}
+  if(p==='unidades')renderUnidades();
+  if(p==='conductores')renderConductores();
+  if(p==='conductor')renderCondView();
+}
+
+function selRuta(r){bS.ruta=r;document.querySelectorAll('.rb').forEach(b=>b.classList.remove('sel'));document.getElementById('rb-'+r).classList.add('sel');checkP1();}
+document.getElementById('b-fecha').min=new Date().toISOString().split('T')[0];
+function checkP1(){bS.fecha=document.getElementById('b-fecha').value;document.getElementById('btn-p1').disabled=!(bS.ruta&&bS.fecha);}
+function checkP4(){bS.nombre=document.getElementById('b-nombre').value.trim();bS.tel=document.getElementById('b-tel').value.trim();bS.personas=parseInt(document.getElementById('b-personas').value);document.getElementById('btn-p4').disabled=!(bS.nombre.length>2&&bS.tel.length>7);}
+function selMetodo(m){bS.metodo=m;document.querySelectorAll('.po').forEach(x=>x.classList.remove('sel'));document.getElementById('pm-'+m).classList.add('sel');document.getElementById('btn-p5').disabled=false;}
+
+function bGoTo(n){
+  for(let i=1;i<=6;i++){document.getElementById('bp'+i).classList.remove('vis');const s=document.getElementById('bs'+i);s.classList.remove('active','done');if(i<n)s.classList.add('done');else if(i===n)s.classList.add('active');}
+  document.getElementById('bp-ok').classList.remove('vis');
+  document.getElementById('bp'+n).classList.add('vis');
+  if(n===2)renderHors();
+  if(n===3){renderUPick();document.getElementById('btn-p3').disabled=true;}
+  if(n===6){renderResumenPago();startTimer();}
+}
+
+function getUDisp(ruta,fecha,hor){return db.unidades.filter(u=>{const res=db.reservas.filter(r=>r.ruta===ruta&&r.fecha===fecha&&r.horario===hor&&r.unidadId===u.id&&!['cancelada','expirada'].includes(r.estado)).reduce((a,r)=>a+r.personas,0);return res<u.cap;});}
+function getOcup(ruta,fecha,hor,uid){let o=[];db.reservas.filter(r=>r.ruta===ruta&&r.fecha===fecha&&r.horario===hor&&r.unidadId===uid&&!['cancelada','expirada'].includes(r.estado)).forEach(r=>{for(let i=r.lugar;i<r.lugar+r.personas;i++)o.push(i);});return o;}
+
+function renderHors(){
+  const c=document.getElementById('hor-container');c.innerHTML='';
+  HORS[bS.ruta].forEach(h=>{
+    const d=getUDisp(bS.ruta,bS.fecha,h);const ll=d.length===0;
+    const el=document.createElement('div');el.className='hb'+(ll?' lleno':'');
+    el.innerHTML=`<div class="ht">${h}</div><div class="hs">${ll?'Sin lugares':d.length+' unidad(es)'}</div>`;
+    if(!ll)el.onclick=()=>{bS.horario=h;bS.unidad=null;bS.lugar=null;document.querySelectorAll('.hb').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');document.getElementById('btn-p2').disabled=false;};
+    c.appendChild(el);
+  });
+}
+
+function renderUPick(){
+  const c=document.getElementById('unidad-pick');c.innerHTML='';
+  const d=getUDisp(bS.ruta,bS.fecha,bS.horario);
+  if(!d.length){c.innerHTML='<div class="empty">😕 Sin unidades disponibles</div>';return;}
+  d.forEach(u=>{
+    const occ=getOcup(bS.ruta,bS.fecha,bS.horario,u.id);
+    const lib=u.cap-occ.length;
+    const cond=db.conductores.find(c=>c.id===u.conductor);
+    let seats='';for(let i=1;i<=u.cap;i++)seats+=`<div class="seat${occ.includes(i)?' taken':''}" style="display:inline-flex">${occ.includes(i)?'✕':i}</div>`;
+    const el=document.createElement('div');el.className='icard';el.style.cursor='pointer';
+    let condH='';if(cond){const fi=cond.foto?`<img src="${cond.foto}" alt="${cond.nombre}">`:'👤';condH=`<div style="display:flex;align-items:center;gap:6px;margin-top:5px"><div class="av" style="width:24px;height:24px;font-size:12px">${fi}</div><span style="font-size:12px;color:#888">${cond.nombre} ${cond.apellido}</span></div>`;}
+    el.innerHTML=`<div class="swatch" style="background:${u.color}"></div><div class="ib"><div class="in">${u.nombre} <span style="font-size:11px;font-weight:400;color:#888">${u.placa}</span> <span class="badge bg">${lib} libre${lib!==1?'s':''}</span></div>${condH}<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">${seats}</div></div>`;
+    el.onclick=()=>{const li=[];for(let i=1;i<=u.cap;i++)if(!occ.includes(i))li.push(i);bS.unidad=u;bS.lugar=li[0];document.querySelectorAll('#unidad-pick .icard').forEach(x=>x.style.border='1px solid #e8edf5');el.style.border='2px solid #1a3a6b';document.getElementById('btn-p3').disabled=false;};
+    c.appendChild(el);
+  });
+}
+
+function renderResumenPago(){
+  const cond=bS.unidad?db.conductores.find(c=>c.id===bS.unidad.conductor):null;
+  const fmtFecha=new Date(bS.fecha+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('resumen-pago').innerHTML=`
+    <div style="font-size:13px">
+      ${row2('Ruta',bS.ruta==='MCL'?'Monclova → Monterrey':'Monterrey → Monclova')}
+      ${row2('Fecha',fmtFecha)}
+      ${row2('Horario',bS.horario)}
+      ${row2('Unidad',bS.unidad.nombre+' ('+bS.unidad.placa+')')}
+      ${row2('Conductor',cond?cond.nombre+' '+cond.apellido:'Sin asignar')}
+      ${row2('Lugar','#'+bS.lugar)}
+      ${row2('Pasajero',bS.nombre)}
+      ${row2('Personas',bS.personas)}
+      ${row2('Saldo $250','Pagar al conductor ('+(bS.metodo==='spei'?'SPEI':'Efectivo')+')')}
+    </div>`;
+  document.getElementById('timer-box').style.display='flex';
+}
+function row2(l,v){return`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f2f8"><span style="color:#888">${l}</span><span style="font-weight:600">${v}</span></div>`;}
+
+function startTimer(){
+  clearInterval(timerInt);let s=30*60;
+  document.getElementById('timer-disp').textContent=fmt(s);
+  timerInt=setInterval(()=>{s--;document.getElementById('timer-disp').textContent=fmt(s);if(s<=0){clearInterval(timerInt);document.getElementById('timer-disp').textContent='Expirado';}},1000);
+}
+function fmt(s){return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');}
+
+async function pagarMP(){
+  const btn=document.getElementById('btn-pagar');
+  btn.disabled=true;btn.textContent='Conectando con Mercado Pago…';
+  const folio='SB-'+Date.now().toString(36).toUpperCase().slice(-6);
+  const cond=bS.unidad?db.conductores.find(c=>c.id===bS.unidad.conductor):null;
+
+  // Guardar reserva localmente como pendiente antes de redirigir
+  const res={id:folio,folio,ruta:bS.ruta,fecha:bS.fecha,horario:bS.horario,unidadId:bS.unidad.id,unidadNombre:bS.unidad.nombre,placa:bS.unidad.placa,conductorId:cond?.id||'',conductorNombre:cond?cond.nombre+' '+cond.apellido:'',conductorClabe:cond?.clabe||'',conductorBanco:cond?.banco||'',lugar:bS.lugar,nombre:bS.nombre,tel:bS.tel,personas:bS.personas,deposito:100,saldo:250,total:350,metodo:bS.metodo,estado:'pendiente',saldoEstado:'pendiente',creadaEn:new Date().toISOString()};
+  db.reservas.unshift(res);saveDB();
+
+  try{
+    const resp=await fetch(BASE_URL+'/crear-pago',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({folio,nombre:bS.nombre,tel:bS.tel,ruta:bS.ruta,fecha:bS.fecha,horario:bS.horario,unidadNombre:bS.unidad.nombre,placa:bS.unidad.placa,conductorNombre:cond?cond.nombre+' '+cond.apellido:'',lugar:bS.lugar,personas:bS.personas,metodoPago:bS.metodo})});
+    if(!resp.ok)throw new Error('Error del servidor');
+    const data=await resp.json();
+    const link=MP_ENV==='production'?data.initPoint:data.sandboxInitPoint;
+    clearInterval(timerInt);
+    window.location.href=link;
+  }catch(e){
+    console.error(e);
+    alert('No pudimos conectar con Mercado Pago. Verifica tu conexión e intenta de nuevo.');
+    btn.disabled=false;btn.textContent='🔒 Pagar $100 con Mercado Pago';
+  }
+}
+
+function mostrarExito(r){
+  const cond=r.conductorId?db.conductores.find(c=>c.id===r.conductorId):null;
+  const fmtF=new Date(r.fecha+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+  document.getElementById('ticket-out').innerHTML=`
+    <div class="tbrand"><span class="tbs">S</span><span class="tbube">ube T</span></div>
+    <div style="font-size:11px;opacity:.6;margin-bottom:2px">Folio de viaje</div>
+    <div style="font-size:22px;font-weight:700;letter-spacing:3px;margin-bottom:10px;color:#f0c015">${r.folio}</div>
+    <div class="tr"><span class="tl">Pasajero</span><span>${r.nombre}</span></div>
+    <div class="tr"><span class="tl">Ruta</span><span>${r.ruta==='MCL'?'MCL → MTY':'MTY → MCL'}</span></div>
+    <div class="tr"><span class="tl">Fecha</span><span>${fmtF}</span></div>
+    <div class="tr"><span class="tl">Salida</span><span>${r.horario}</span></div>
+    <div class="tr"><span class="tl">Unidad</span><span>${r.unidadNombre}</span></div>
+    <div class="tr"><span class="tl">Conductor</span><span>${r.conductorNombre||'—'}</span></div>
+    <div class="tr"><span class="tl">Lugar</span><span>#${r.lugar}</span></div>
+    <div class="tr"><span class="tl">Depósito</span><span style="color:#9fe1cb">$100 ✓ Pagado</span></div>
+    <div class="tr" style="font-weight:600"><span>Saldo al conductor</span><span style="color:#f0c015">$250 MXN</span></div>`;
+  let saldoH='';
+  if(r.metodo==='spei'&&r.conductorClabe){saldoH=`<div class="saldo-spei"><div class="stitle">🏦 Transfiere $250 al conductor antes de abordar</div><div class="sdet">Beneficiario: <strong>${r.conductorNombre}</strong><br>Banco: ${r.conductorBanco}<br><span class="clabe">${r.conductorClabe}</span></div></div>`;}
+  else{saldoH=`<div class="saldo-ef"><div class="stitle">💵 Lleva $250 en efectivo el día del viaje</div><div class="sdet">Entrégaselos al conductor al abordar.</div></div>`;}
+  document.getElementById('saldo-info').innerHTML=saldoH;
+  for(let i=1;i<=6;i++){document.getElementById('bp'+i).classList.remove('vis');document.getElementById('bs'+i).classList.remove('active','done');document.getElementById('bs'+i).classList.add('done');}
+  document.getElementById('bp-ok').classList.add('vis');
+  showPage('reservar');
+}
+
+function nuevaReserva(){
+  bS={ruta:null,fecha:null,horario:null,unidad:null,lugar:null,nombre:'',tel:'',personas:1,metodo:null};
+  ['b-fecha','b-nombre','b-tel'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('b-personas').value='1';
+  document.querySelectorAll('.rb').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.po').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('btn-p1').disabled=true;document.getElementById('btn-p5').disabled=true;
+  document.getElementById('bp-ok').classList.remove('vis');
+  for(let i=1;i<=6;i++){document.getElementById('bs'+i).classList.remove('active','done');}
+  document.getElementById('bs1').classList.add('active');document.getElementById('bp1').classList.add('vis');
+  clearInterval(timerInt);
+}
+
+function renderStats(){
+  const hoy=new Date().toISOString().split('T')[0];
+  const hoyR=db.reservas.filter(r=>r.fecha===hoy&&!['cancelada','expirada'].includes(r.estado));
+  const pSaldo=db.reservas.filter(r=>r.estado==='confirmada'&&r.saldoEstado==='pendiente').length;
+  const ing=db.reservas.filter(r=>!['cancelada','expirada'].includes(r.estado)).reduce((a,r)=>a+r.deposito,0);
+  document.getElementById('stats-bar').innerHTML=`
+    <div class="stat"><div class="statn">${hoyR.length}</div><div class="statl">Viajes hoy</div></div>
+    <div class="stat"><div class="statn">${db.reservas.filter(r=>r.estado==='confirmada').length}</div><div class="statl">Confirmadas</div></div>
+    <div class="stat"><div class="statn" style="color:${pSaldo>0?'#854f0b':'#1a3a6b'}">${pSaldo}</div><div class="statl">Saldo pendiente</div></div>
+    <div class="stat"><div class="statn">$${ing.toLocaleString('es-MX')}</div><div class="statl">Depósitos</div></div>`;
+}
+
+function renderReservas(){
+  const b=(document.getElementById('f-buscar').value||'').toLowerCase();
+  const f=document.getElementById('f-fecha').value;
+  const e=document.getElementById('f-estado').value;
+  let l=db.reservas.filter(r=>{if(b&&!r.nombre.toLowerCase().includes(b))return false;if(f&&r.fecha!==f)return false;if(e&&r.estado!==e)return false;return true;});
+  const el=document.getElementById('reservas-list');
+  if(!l.length){el.innerHTML='<div class="empty">📭 Sin reservas</div>';return;}
+  el.innerHTML=`<div style="overflow-x:auto"><table class="rtable"><thead><tr><th style="width:80px">Folio</th><th>Pasajero</th><th style="width:65px">Fecha</th><th style="width:80px">Estado</th><th style="width:70px">Saldo</th><th style="width:32px"></th></tr></thead><tbody>
+    ${l.map(r=>`<tr><td style="font-family:monospace;font-size:11px;color:#1a3a6b">${r.folio}</td><td>${r.nombre}<br><span style="font-size:11px;color:#aaa">${r.tel}</span></td><td style="font-size:12px">${new Date(r.fecha+'T12:00:00').toLocaleDateString('es-MX',{day:'2-digit',month:'short'})}</td><td><span class="badge ${eBadge(r.estado)}">${r.estado}</span></td><td><span class="badge ${r.saldoEstado==='liquidado'?'bg':'by'}">${r.saldoEstado||'—'}</span></td><td><button class="btn btn-sm" onclick="verRes('${r.id}')">👁</button></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function eBadge(e){return{confirmada:'bg',pendiente:'by',abordado:'bb',cancelada:'bgr',expirada:'bred'}[e]||'bgr';}
+
+function verRes(id){
+  const r=db.reservas.find(x=>x.id===id);if(!r)return;curResId=id;
+  const fmtF=new Date(r.fecha+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  let sH='';if(r.metodo==='spei'&&r.conductorClabe){sH=`<div style="background:#e8f4ec;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;color:#085041"><strong>SPEI:</strong> ${r.conductorBanco} · <span style="font-family:monospace">${r.conductorClabe}</span></div>`;}else{sH=`<div style="background:#faeeda;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;color:#633806">Efectivo al abordar</div>`;}
+  document.getElementById('m-r-content').innerHTML=`
+    <div class="ticket" style="margin-bottom:1rem">
+      <div class="tbrand"><span class="tbs">S</span><span class="tbube">ube T</span></div>
+      <div style="font-size:11px;opacity:.6;margin-bottom:2px">Folio</div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:8px;color:#f0c015">${r.folio}</div>
+      <div class="tr"><span class="tl">Pasajero</span><span>${r.nombre}</span></div>
+      <div class="tr"><span class="tl">Teléfono</span><span>${r.tel}</span></div>
+      <div class="tr"><span class="tl">Ruta</span><span>${r.ruta==='MCL'?'MCL → MTY':'MTY → MCL'}</span></div>
+      <div class="tr"><span class="tl">Fecha</span><span>${fmtF}</span></div>
+      <div class="tr"><span class="tl">Salida</span><span>${r.horario}</span></div>
+      <div class="tr"><span class="tl">Conductor</span><span>${r.conductorNombre||'—'}</span></div>
+      <div class="tr"><span class="tl">Lugar</span><span>#${r.lugar}</span></div>
+      <div class="tr"><span class="tl">Depósito</span><span style="color:#9fe1cb">$${r.deposito} ✓</span></div>
+      <div class="tr" style="font-weight:600"><span>Saldo</span><span>$${r.saldo} · ${r.saldoEstado}</span></div>
+    </div>${sH}
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      ${r.saldoEstado==='pendiente'&&r.estado==='confirmada'?`<button class="btn btn-green btn-sm" onclick="marcarSaldo('${r.id}')">✓ Saldo recibido</button>`:''}
+      ${r.estado==='confirmada'?`<button class="btn btn-sube btn-sm" onclick="marcarAbordado('${r.id}')">✈ Marcar abordado</button>`:''}
+    </div>`;
+  openM('m-r');
+}
+function marcarSaldo(id){const r=db.reservas.find(x=>x.id===id);if(r){r.saldoEstado='liquidado';saveDB();}closeM('m-r');renderReservas();renderStats();}
+function marcarAbordado(id){const r=db.reservas.find(x=>x.id===id);if(r){r.estado='abordado';r.saldoEstado='liquidado';saveDB();}closeM('m-r');renderReservas();renderStats();}
+function cancelarRes(){if(!curResId)return;if(!confirm('¿Cancelar esta reserva?'))return;const r=db.reservas.find(x=>x.id===curResId);if(r){r.estado='cancelada';saveDB();}closeM('m-r');renderReservas();renderStats();}
+
+// CONDUCTOR VIEW
+function poblarCondSelect(){
+  const s=document.getElementById('cond-unidad');s.innerHTML='<option value="">— Selecciona —</option>';
+  db.unidades.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre+' ('+u.placa+')';s.appendChild(o);});
+}
+function renderCondView(){
+  const uid=document.getElementById('cond-unidad').value;
+  const hor=document.getElementById('cond-horario').value;
+  const c=document.getElementById('cond-pasajeros');
+  if(!uid||!hor){c.innerHTML='';return;}
+  const hoy=new Date().toISOString().split('T')[0];
+  const res=db.reservas.filter(r=>r.unidadId===uid&&r.horario===hor&&r.fecha===hoy&&!['cancelada','expirada'].includes(r.estado));
+  if(!res.length){c.innerHTML='<div class="card"><div class="empty">👥 Sin pasajeros para este viaje</div></div>';return;}
+  c.innerHTML=res.map(r=>`
+    <div class="cond-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div><div style="font-size:14px;font-weight:600">${r.nombre} <span style="font-size:11px;color:#888;font-weight:400">· Lugar #${r.lugar}</span></div>
+        <div style="font-size:12px;color:#888;margin-top:2px">📞 ${r.tel} · ${r.personas} persona${r.personas>1?'s':''}</div></div>
+        <span class="badge ${eBadge(r.estado)}">${r.estado}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;${r.saldoEstado==='liquidado'?'background:#e8f4ec':'background:#faeeda'}">
+        <div style="flex:1;font-size:12px;${r.saldoEstado==='liquidado'?'color:#085041':'color:#633806'}">
+          <strong>Saldo $250</strong> · ${r.metodo==='spei'?'SPEI':'Efectivo'} · ${r.saldoEstado==='liquidado'?'✓ Recibido':'Pendiente'}
+        </div>
+        ${r.saldoEstado==='pendiente'?`<button class="btn btn-green btn-sm" onclick="marcarSaldoCond('${r.id}')">Recibí el pago</button>`:''}
+      </div>
+    </div>`).join('');
+}
+function marcarSaldoCond(id){const r=db.reservas.find(x=>x.id===id);if(r){r.saldoEstado='liquidado';r.estado='abordado';saveDB();}renderCondView();renderStats();}
+
+// UNIDADES
+function renderUnidades(){
+  const el=document.getElementById('unidades-list');
+  if(!db.unidades.length){el.innerHTML='<div class="card"><div class="empty">🚗 Sin unidades</div></div>';return;}
+  el.innerHTML='';
+  db.unidades.forEach(u=>{const cond=db.conductores.find(c=>c.id===u.conductor);const d=document.createElement('div');d.className='icard';d.innerHTML=`<div class="swatch" style="background:${u.color}"></div><div class="ib"><div class="in">${u.nombre} <span style="font-size:11px;font-weight:400;color:#888">${u.placa}</span></div><div class="is">${u.cap} lugares · ${COLORES[u.color]||u.color}${cond?' · '+cond.nombre+' '+cond.apellido:' · Sin conductor'}</div></div><div class="ia"><button class="btn btn-sm" onclick="editU('${u.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delU('${u.id}')">🗑</button></div>`;el.appendChild(d);});
+}
+function renderConductores(){
+  const el=document.getElementById('conductores-list');
+  if(!db.conductores.length){el.innerHTML='<div class="card"><div class="empty">👤 Sin conductores</div></div>';return;}
+  el.innerHTML='';
+  db.conductores.forEach(c=>{const u=db.unidades.filter(x=>x.conductor===c.id).map(x=>x.nombre).join(', ');const d=document.createElement('div');d.className='icard';const fi=c.foto?`<img src="${c.foto}" alt="${c.nombre}">`:'👤';d.innerHTML=`<div class="av">${fi}</div><div class="ib"><div class="in">${c.nombre} ${c.apellido}</div><div class="is">📞 ${c.tel}${c.clabe?' · CLABE: ...'+c.clabe.slice(-4):' · Sin CLABE'}${u?' · '+u:''}</div></div><div class="ia"><button class="btn btn-sm" onclick="editC('${c.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delC('${c.id}')">🗑</button></div>`;el.appendChild(d);});
+}
+
+function openM(id){document.getElementById(id).style.display='flex';}
+function closeM(id){document.getElementById(id).style.display='none';}
+function closeMBg(e,id){if(e.target===document.getElementById(id))closeM(id);}
+
+function poblarCondSel(selId,val){
+  const s=document.getElementById(selId);s.innerHTML='<option value="">Sin conductor</option>';
+  db.conductores.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre+' '+c.apellido;if(c.id===val)o.selected=true;s.appendChild(o);});
+}
+
+document.getElementById('btn-add-u').onclick=()=>{
+  document.getElementById('u-id').value='';document.getElementById('m-u-title').textContent='Nueva unidad';
+  ['u-nom','u-placa'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('u-cap').value='6';document.getElementById('u-color').value='#ffffff';
+  poblarCondSel('u-cond','');openM('m-u');
+};
+function editU(id){const u=db.unidades.find(x=>x.id===id);if(!u)return;document.getElementById('u-id').value=id;document.getElementById('m-u-title').textContent='Editar unidad';document.getElementById('u-nom').value=u.nombre;document.getElementById('u-placa').value=u.placa;document.getElementById('u-cap').value=u.cap;document.getElementById('u-color').value=u.color;poblarCondSel('u-cond',u.conductor);openM('m-u');}
+function saveU(){const id=document.getElementById('u-id').value;const data={nombre:document.getElementById('u-nom').value.trim(),placa:document.getElementById('u-placa').value.trim().toUpperCase(),cap:parseInt(document.getElementById('u-cap').value),color:document.getElementById('u-color').value,conductor:document.getElementById('u-cond').value};if(!data.nombre||!data.placa){alert('Nombre y placa son obligatorios');return;}if(id){const u=db.unidades.find(x=>x.id===id);if(u)Object.assign(u,data);}else db.unidades.push({id:'u'+Date.now(),...data});saveDB();closeM('m-u');renderUnidades();poblarCondSelect();}
+function delU(id){if(!confirm('¿Eliminar?'))return;db.unidades=db.unidades.filter(x=>x.id!==id);saveDB();renderUnidades();}
+
+document.getElementById('btn-add-c').onclick=()=>{
+  document.getElementById('c-id').value='';document.getElementById('m-c-title').textContent='Nuevo conductor';
+  ['c-nom','c-ape','c-tel','c-lic','c-clabe','c-banco','c-notas','c-foto'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c-av-prev').innerHTML='👤<input type="file" accept="image/*" onchange="prevFoto(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%">';
+  openM('m-c');
+};
+function prevFoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{document.getElementById('c-foto').value=ev.target.result;const p=document.getElementById('c-av-prev');p.innerHTML=`<img src="${ev.target.result}" alt="foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><input type="file" accept="image/*" onchange="prevFoto(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%">`;};r.readAsDataURL(f);}
+function editC(id){const c=db.conductores.find(x=>x.id===id);if(!c)return;document.getElementById('c-id').value=id;document.getElementById('m-c-title').textContent='Editar conductor';document.getElementById('c-nom').value=c.nombre;document.getElementById('c-ape').value=c.apellido;document.getElementById('c-tel').value=c.tel;document.getElementById('c-lic').value=c.licencia;document.getElementById('c-clabe').value=c.clabe||'';document.getElementById('c-banco').value=c.banco||'';document.getElementById('c-notas').value=c.notas||'';document.getElementById('c-foto').value=c.foto||'';const p=document.getElementById('c-av-prev');p.innerHTML=c.foto?`<img src="${c.foto}" alt="${c.nombre}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><input type="file" accept="image/*" onchange="prevFoto(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%">`:'👤<input type="file" accept="image/*" onchange="prevFoto(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%">';openM('m-c');}
+function saveC(){const id=document.getElementById('c-id').value;const data={nombre:document.getElementById('c-nom').value.trim(),apellido:document.getElementById('c-ape').value.trim(),tel:document.getElementById('c-tel').value.trim(),licencia:document.getElementById('c-lic').value.trim(),clabe:document.getElementById('c-clabe').value.trim(),banco:document.getElementById('c-banco').value.trim(),notas:document.getElementById('c-notas').value.trim(),foto:document.getElementById('c-foto').value};if(!data.nombre){alert('El nombre es obligatorio');return;}if(id){const c=db.conductores.find(x=>x.id===id);if(c)Object.assign(c,data);}else db.conductores.push({id:'c'+Date.now(),...data});saveDB();closeM('m-c');renderConductores();poblarCondSelect();}
+function delC(id){if(!confirm('¿Eliminar?'))return;db.conductores=db.conductores.filter(x=>x.id!==id);db.unidades.forEach(u=>{if(u.conductor===id)u.conductor='';});saveDB();renderConductores();}
+
+loadDB();
+</script>
+</body>
+</html>

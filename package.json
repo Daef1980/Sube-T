@@ -1,0 +1,8 @@
+{
+  "name": "sube-t",
+  "version": "1.0.0",
+  "description": "Sube T - Sistema de transporte Monclova-Monterrey",
+  "dependencies": {
+    "mercadopago": "^2.0.6"
+  }
+}
